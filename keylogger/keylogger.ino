@@ -1,6 +1,7 @@
 #include <hidboot.h>
 #include <usbhub.h>
 #include "Keyboard.h"
+#ubckyde "SoftwareSerial.h"
 
 #define Serial Serial1
 
@@ -29,7 +30,7 @@ class KbdRptParser : public KeyboardReportParser{
     void OnKeyDown	(uint8_t mod, uint8_t key);
     void OnKeyUp	(uint8_t mod, uint8_t key);
     void OnKeyPressed(uint8_t key);
-    
+
     void _press(uint8_t key);
     void _release(uint8_t key);
 };
@@ -78,46 +79,46 @@ void KbdRptParser::OnControlKeysChanged(uint8_t before, uint8_t after) {
     else Keyboard.release(KEY_LEFT_CTRL);
     Serial.print("<ctrl "+(String)afterMod.bmLeftCtrl+">");
   }
-  
+
   if(beforeMod.bmLeftShift != afterMod.bmLeftShift){
     if(afterMod.bmLeftShift) Keyboard.press(KEY_LEFT_SHIFT);
     else Keyboard.release(KEY_LEFT_SHIFT);
     shift = afterMod.bmLeftShift;
     //Serial.print("<shift "+(String)afterMod.bmLeftShift+">");
   }
-  
+
   if(beforeMod.bmLeftAlt != afterMod.bmLeftAlt){
     if(afterMod.bmLeftAlt) Keyboard.press(KEY_LEFT_ALT);
     else Keyboard.release(KEY_LEFT_ALT);
     Serial.print("<alt "+(String)afterMod.bmLeftAlt+">");
   }
-  
+
   if(beforeMod.bmLeftGUI != afterMod.bmLeftGUI){
     if(afterMod.bmLeftGUI) Keyboard.press(KEY_LEFT_GUI);
     else Keyboard.release(KEY_LEFT_GUI);
-    Serial.print("<gui "+(String)afterMod.bmLeftGUI+">");
+    mySerial.print("<gui "+(String)afterMod.bmLeftGUI+">");
   }
 
   //right
   if(beforeMod.bmRightCtrl != afterMod.bmRightCtrl){
     if(afterMod.bmRightCtrl) Keyboard.press(KEY_RIGHT_CTRL);
     else Keyboard.release(KEY_RIGHT_CTRL);
-    Serial.print("<ctrl "+(String)afterMod.bmRightCtrl+">");
+    mySerial.print("<ctrl "+(String)afterMod.bmRightCtrl+">");
   }
-  
+
   if(beforeMod.bmRightShift != afterMod.bmRightShift){
     if(afterMod.bmRightShift) Keyboard.press(KEY_RIGHT_SHIFT);
     else Keyboard.release(KEY_RIGHT_SHIFT);
     shift = afterMod.bmLeftShift;
     //Serial.print("<shift "+(String)afterMod.bmRightShift+">");
   }
-  
+
   if(beforeMod.bmRightAlt != afterMod.bmRightAlt){
     if(afterMod.bmRightAlt) Keyboard.press(KEY_RIGHT_ALT);
     else Keyboard.release(KEY_RIGHT_ALT);
     Serial.print("<alt "+(String)afterMod.bmRightAlt+">");
   }
-  
+
   if(beforeMod.bmRightGUI != afterMod.bmRightGUI){
     if(afterMod.bmRightGUI) Keyboard.press(KEY_RIGHT_GUI);
     else Keyboard.release(KEY_RIGHT_GUI);
@@ -150,7 +151,7 @@ uint8_t KbdRptParser::_parse(uint8_t key){
     case 60: return KEY_F3; break;
     case 61: return KEY_F4; break;
     case 62: return KEY_F5; break;
-    case 63: return KEY_F6; break;    
+    case 63: return KEY_F6; break;
     case 64: return KEY_F7; break;
     case 65: return KEY_F8; break;
     case 66: return KEY_F9; break;
@@ -191,7 +192,7 @@ String KbdRptParser::_getChar(uint8_t key){
     case 60: return "<F3>\n"; break;
     case 61: return "<F4>\n"; break;
     case 62: return "<F5>\n"; break;
-    case 63: return "<F6>\n"; break;    
+    case 63: return "<F6>\n"; break;
     case 64: return "<F7>\n"; break;
     case 65: return "<F8>\n"; break;
     case 66: return "<F9>\n"; break;
@@ -252,7 +253,7 @@ void setup()
   delay(2000);
 /*
   for(int i=0;i<256;i++){
-    
+
     int key = parser._parse(i);
     if(key == i){
       Keyboard.print((String)i+" ");
@@ -261,9 +262,9 @@ void setup()
       Keyboard.write(KEY_RETURN);
     }
   }*/
-  
+
   if(Usb.Init() == -1) Serial.println("OSC did not start.");
-  
+
   delay(200);
 
   next_time = millis() + 5000;
@@ -275,4 +276,3 @@ void setup()
 void loop(){
   Usb.Task();
 }
-
